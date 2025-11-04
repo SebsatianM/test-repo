@@ -1,0 +1,24 @@
+{
+  "name": "databricks-graphql-lambda",
+  "version": "1.0.0",
+  "description": "AWS Lambda function that connects to Databricks and serves a GraphQL API",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "zip -r function.zip . -x \"*.git*\" && aws lambda update-function-code --function-name databricks-graphql-lambda --zip-file fileb://function.zip"
+  },
+  "keywords": [
+    "databricks",
+    "graphql",
+    "lambda",
+    "aws"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@apollo/server": "^4.10.0",
+    "@as-integrations/aws-lambda": "^3.0.0",
+    "@databricks/sql": "^1.8.0",
+    "graphql": "^16.8.1"
+  }
+}

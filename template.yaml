@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Databricks GraphQL Lambda Function
+
+Parameters:
+  DatabricksHostname:
+    Type: String
+    Description: Databricks workspace hostname
+    NoEcho: true
+
+  DatabricksHttpPath:
+    Type: String
+    Description: HTTP path to SQL warehouse
+    NoEcho: true
+
+  DatabricksToken:
+    Type: String
+    Description: Databricks personal access token
+    NoEcho: true
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: nodejs18.x
+
+Resources:
+  DatabricksGraphQLFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: databricks-graphql-lambda
+      Handler: src/index.handler
+      CodeUri: ./
+      Description: GraphQL API for querying Databricks
+      Environment:
+        Variables:
+          DATABRICKS_SERVER_HOSTNAME: !Ref DatabricksHostname
+          DATABRICKS_HTTP_PATH: !Ref DatabricksHttpPath
+          DATABRICKS_TOKEN: !Ref DatabricksToken
+      Events:
+        GraphQLApiRoot:
+          Type: HttpApi
+          Properties:
+            Path: /
+            Method: ANY
+        GraphQLApiGraphQL:
+          Type: HttpApi
+          Properties:
+            Path: /graphql
+            Method: ANY
+
+Outputs:
+  GraphQLApi:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/"
+
+  FunctionArn:
+    Description: "Lambda Function ARN"
+    Value: !GetAtt DatabricksGraphQLFunction.Arn
